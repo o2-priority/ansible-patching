@@ -10,8 +10,11 @@
   with_items: "{{ needs_service_restart.stdout_lines }}"
 
 - name: "Reboot after patching"
-  reboot:
-    msg: "{{ patch_reboot_message | default('Rebooting due to patching.') }}"
+  shell: |
+    sleep 2 && shutdown -r now "Rebooting system after patch"
+  async: 1
+  poll: 0
+  ignore_errors: true
   when:
     - 'needs_reboot.rc == 1'
     - 'not patch_never_reboot'
